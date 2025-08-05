@@ -40,7 +40,7 @@ export default function Welcome() {
                             Sign Up
                         </Link>
 
-                        <Button className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                        <Button className="px-6 py-2 bg-[#2F8663] hover:bg-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                             Free Consultation
                         </Button>
                     </div>
@@ -57,8 +57,8 @@ export default function Welcome() {
                     <div className="absolute inset-0 bg-black/40"></div>
                 </div>
 
-                <div className="relative z-10 flex h-full items-center justify-center  px-4">
-                    <div className="w-full max-w-[70%] flex flex-col gap-26 ">
+                <div className="relative z-10 flex h-full items-center justify-center pt-24 px-4">
+                    <div className="w-full max-w-[70%] flex flex-col gap-26 pt-8 ">
                         <div className="text-center ">
                             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                                 Find your dream property
@@ -95,7 +95,7 @@ export default function Welcome() {
                             </div>
 
 
-                            <div className="space-y-4 flex flex-col">
+                            <div className="space-y-4 flex flex-col ">
                                 <div className="flex flex-row space-x-4 justify-between">
 
                                     <div className="w-full">
@@ -146,7 +146,7 @@ export default function Welcome() {
                                 </div>
 
 
-                                <Button className=" bg-[#2F8663] hover:bg-[#2F8663] text-white py-4 rounded-xl text-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl">
+                                <Button className="w-50 align-self-center mx-auto bg-[#2F8663] hover:bg-[#2F8663] text-white p-6 rounded-xl text-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl">
                                     Search Properties
                                 </Button>
                             </div>
@@ -154,7 +154,7 @@ export default function Welcome() {
                     </div>
                 </div>
             </section>
-            
+
         </div>
     );
 }
