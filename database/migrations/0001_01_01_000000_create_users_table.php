@@ -19,6 +19,11 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            // lcolumns li zedt flusers table
+            $table->unsignedBigInteger('role_id');
+            $table->string('phone')->nullable();
+            $table->string('city')->nullable();
+            $table->string('interest')->nullable(); 
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
