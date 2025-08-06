@@ -29,21 +29,21 @@ Route::get('/dashboard', function () {
         default => Inertia::render('dashboard')
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
-// Role-based dashboards 
+// Role-based dashboards with proper access control
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
     ->middleware(['auth', 'verified', 'role:admin'])
     ->name('admin.dashboard');
 
 Route::get('/agent/dashboard', [AgentController::class, 'dashboard'])
-    ->middleware(['auth', 'verified', 'role:agent'])
+    ->middleware(['auth', 'verified', 'role:agent,admin'])
     ->name('agent.dashboard');
 
 Route::get('/owner/dashboard', [OwnerController::class, 'dashboard'])
-    ->middleware(['auth', 'verified', 'role:owner'])
+    ->middleware(['auth', 'verified', 'role:owner,admin'])
     ->name('owner.dashboard');
 
 Route::get('/client/dashboard', [ClientController::class, 'dashboard'])
-    ->middleware(['auth', 'verified', 'role:client'])
+    ->middleware(['auth', 'verified', 'role:client,admin'])
     ->name('client.dashboard');
 
 

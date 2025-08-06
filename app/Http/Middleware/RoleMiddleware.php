@@ -13,20 +13,29 @@ class RoleMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $roles): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
         if (!$request->user()) {
             return redirect()->route('login');
         }
 
-        //  allowed roles 
-        $allowedRoles = array_map('trim', explode(',', $roles));
+        $user = $request->user();
+        if (!$user->role) {
+            abort(403, 'User has no role assigned.');
+        }
 
-        $userRole = $request->user()->role->name;
+        // Get  allowed roles 
+        if (count($roles) === 1 && strpos($roles[0], ',') !== false) {
+            $allowedRoles = array_filter(array_map('trim', explode(',', $roles[0])));
+        } else {
+            $allowedRoles = array_filter(array_map('trim', $roles));
+        }
 
-        // user's role not allowed to access this route
+        $userRole = $user->role->name;
+
+        // Check if user's role is in allowed roles
         if (!in_array($userRole, $allowedRoles)) {
-            abort(403, 'Access denied. You do not have the required role.');
+            abort(403, 'Access denied. Your role "' . $userRole . '" is not allowed. Required: ' . implode(', ', $allowedRoles));
         }
 
         return $next($request);
