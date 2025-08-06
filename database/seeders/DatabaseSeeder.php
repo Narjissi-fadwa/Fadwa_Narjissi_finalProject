@@ -17,22 +17,28 @@ class DatabaseSeeder extends Seeder
         // create users for test
 
         User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => bcrypt('password'),
+            'role_id' => 1,
+        ]);
+        User::factory()->create([
             'name' => 'Agent User',
             'email' => 'agent@example.com',
             'password' => bcrypt('password'),
-            'role_id' => 1,
+            'role_id' => 2,
         ]);
         User::factory()->create([
             'name' => 'Owner User',
             'email' => 'owner@example.com',
             'password' => bcrypt('password'),
-            'role_id' => 2,
+            'role_id' => 3,
         ]);
         User::factory()->create([
             'name' => 'Client User',
             'email' => 'client@example.com',
             'password' => bcrypt('password'),
-            'role_id' => 3,
+            'role_id' => 4,
         ]);
 
         // seed role

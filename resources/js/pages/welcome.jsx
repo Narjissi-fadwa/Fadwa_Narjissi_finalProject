@@ -7,9 +7,10 @@ import {
 } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { Link } from "@inertiajs/react"
+import { Link, usePage } from "@inertiajs/react"
 
 export default function Welcome() {
+    const { auth } = usePage().props;
     const [activeTab, setActiveTab] = useState('buy')
     const [propertyType, setPropertyType] = useState('')
     const [location, setLocation] = useState('')
@@ -26,19 +27,47 @@ export default function Welcome() {
                     </div>
 
                     <div className="flex items-center space-x-4">
-                        <Link
-                            href="/login"
-                            className="px-6 py-2 text-white/90 hover:text-white font-medium transition-all duration-300 hover:bg-white/10 rounded-lg backdrop-blur-sm"
-                        >
-                            Login
-                        </Link>
+                        {auth.user ? (
+                            // Show user menu when logged in
+                            <>
+                                <Link
+                                    href="/dashboard"
+                                    className="px-6 py-2 text-white/90 hover:text-white font-medium transition-all duration-300 hover:bg-white/10 rounded-lg backdrop-blur-sm inline-block"
+                                >
+                                    Dashboard
+                                </Link>
 
-                        <Link
-                            href="/register"
-                            className="px-6 py-2 text-white font-medium border border-white/30 hover:border-white/50 rounded-lg transition-all duration-300 hover:bg-white/10 backdrop-blur-sm"
-                        >
-                            Sign Up
-                        </Link>
+                                <span className="px-4 py-2 text-white/80 text-sm">
+                                    Welcome, {auth.user.name}
+                                </span>
+
+                                <Link
+                                    href="/logout"
+                                    method="post"
+                                    as="button"
+                                    className="px-6 py-2 text-white/90 hover:text-white font-medium border border-white/30 hover:border-white/50 rounded-lg transition-all duration-300 hover:bg-white/10 backdrop-blur-sm"
+                                >
+                                    Logout
+                                </Link>
+                            </>
+                        ) : (
+                            // Show login/register when not logged in
+                            <>
+                                <Link
+                                    href="/login"
+                                    className="px-6 py-2 text-white/90 hover:text-white font-medium transition-all duration-300 hover:bg-white/10 rounded-lg backdrop-blur-sm inline-block"
+                                >
+                                    Login
+                                </Link>
+
+                                <Link
+                                    href="/register"
+                                    className="px-6 py-2 text-white font-medium border border-white/30 hover:border-white/50 rounded-lg transition-all duration-300 hover:bg-white/10 backdrop-blur-sm inline-block"
+                                >
+                                    Sign Up
+                                </Link>
+                            </>
+                        )}
 
                         <Button className="px-6 py-2 bg-[#2F8663] hover:bg-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                             Free Consultation
