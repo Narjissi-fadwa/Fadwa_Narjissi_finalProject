@@ -14,34 +14,46 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // create users for test
-
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password'),
-            'role_id' => 1,
-        ]);
-        User::factory()->create([
-            'name' => 'Agent User',
-            'email' => 'agent@example.com',
-            'password' => bcrypt('password'),
-            'role_id' => 2,
-        ]);
-        User::factory()->create([
-            'name' => 'Owner User',
-            'email' => 'owner@example.com',
-            'password' => bcrypt('password'),
-            'role_id' => 3,
-        ]);
-        User::factory()->create([
-            'name' => 'Client User',
-            'email' => 'client@example.com',
-            'password' => bcrypt('password'),
-            'role_id' => 4,
-        ]);
-
-        // seed role
+        // Seed roles first
         $this->call(RoleSeeder::class);
+
+        // Create baseline users idempotently (will not duplicate if rerun)
+        $roles = Role::pluck('id', 'name');
+
+        User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin User',
+                'password' => bcrypt('password'),
+                'role_id' => $roles['admin'] ?? null,
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'agent@example.com'],
+            [
+                'name' => 'Agent User',
+                'password' => bcrypt('password'),
+                'role_id' => $roles['agent'] ?? null,
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'owner@example.com'],
+            [
+                'name' => 'Owner User',
+                'password' => bcrypt('password'),
+                'role_id' => $roles['owner'] ?? null,
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'client@example.com'],
+            [
+                'name' => 'Client User',
+                'password' => bcrypt('password'),
+                'role_id' => $roles['client'] ?? null,
+            ]
+        );
     }
 }

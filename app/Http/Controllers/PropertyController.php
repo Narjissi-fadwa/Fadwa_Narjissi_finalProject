@@ -161,4 +161,66 @@ class PropertyController extends Controller
 
         return redirect()->back()->with('success', 'Offer response sent successfully!');
     }
+
+    /**
+     * Public listing of properties (active + approved) with minimal fields.
+     */
+    public function index()
+    {
+        
+        $properties = Property::query()
+            ->where('status', 'active')
+            ->where('approval_status', 'approved')
+            ->orderByDesc('id')
+            ->paginate(12)
+            ->through(function (Property $p) {
+                return [
+                    'id' => $p->id,
+                    'title' => $p->title,
+                    'price' => $p->price,
+                    'type' => $p->type,
+                    'image' => $p->images && count($p->images) > 0 ? (str_starts_with($p->images[0], '/storage/') ? $p->images[0] : '/storage/' . $p->images[0]) : null,
+                    'address' => $p->address,
+                    'bedrooms' => $p->bedrooms,
+                    'area' => $p->area,
+                    'owner_id' => $p->user_id,
+                ];
+            });
+
+        return Inertia::render('properties/Index', [
+            'properties' => $properties,
+        ]);
+    }
+
+    /**
+     * Public property detail page.
+     */
+    public function show(Property $property)
+    {
+        if ($property->status !== 'active' || $property->approval_status !== 'approved') {
+            abort(404);
+        }
+
+        $property->load(['owner']);
+
+        $data = [
+            'id' => $property->id,
+            'title' => $property->title,
+            'price' => $property->price,
+            'type' => $property->type,
+            'address' => $property->address,
+            'area' => $property->area,
+            'bedrooms' => $property->bedrooms,
+            'description' => $property->description,
+            'images' => $property->images ? array_map(function ($path) { return str_starts_with($path, '/storage/') ? $path : '/storage/' . $path; }, $property->images) : [],
+            'owner' => [
+                'id' => $property->owner->id,
+                'name' => $property->owner->name,
+            ],
+        ];
+
+        return Inertia::render('properties/Show', [
+            'property' => $data,
+        ]);
+    }
 }

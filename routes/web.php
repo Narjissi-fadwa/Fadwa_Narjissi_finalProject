@@ -9,9 +9,35 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\ViewingController;
+use App\Http\Controllers\OwnerCalendarController;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    $properties = \App\Models\Property::query()
+        ->where('status', 'active')
+        ->where('approval_status', 'approved')
+        ->orderByDesc('id')
+        ->limit(2) 
+        ->get()
+        ->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'title' => $p->title,
+                'price' => $p->price,
+                'type' => $p->type,
+                'image' => $p->images && count($p->images) > 0 ? (str_starts_with($p->images[0], '/storage/') ? $p->images[0] : '/storage/' . $p->images[0]) : null,
+                'address' => $p->address,
+                'bedrooms' => $p->bedrooms,
+                'area' => $p->area,
+                'owner_id' => $p->user_id,
+            ];
+        });
+
+    return Inertia::render('welcome', [
+        'properties' => [
+            'data' => $properties
+        ]
+    ]);
 })->name('home');
 
 Route::get('/dashboard', function () {
@@ -27,7 +53,7 @@ Route::get('/dashboard', function () {
         'admin' => redirect()->route('admin.dashboard'),
         'agent' => redirect()->route('agent.dashboard'),
         'owner' => redirect()->route('owner.dashboard'),
-        'client' => redirect()->route('client.dashboard'),
+        'client' => redirect()->route('properties.index'),
         default => Inertia::render('dashboard')
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -43,6 +69,9 @@ Route::get('/agent/dashboard', [AgentController::class, 'dashboard'])
 Route::get('/owner/dashboard', [OwnerController::class, 'dashboard'])
     ->middleware(['auth', 'verified', 'role:owner,admin'])
     ->name('owner.dashboard');
+Route::get('/client/properties', [ClientController::class, 'dashboard'])
+    ->middleware(['auth', 'verified', 'role:client,admin'])
+    ->name('client.properties');
 
 // Owner routes
 Route::middleware(['auth', 'verified', 'role:owner,admin'])->prefix('owner')->name('owner.')->group(function () {
@@ -96,6 +125,23 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         return back()->with('success', 'Agent assigned successfully.');
     })->name('properties.agent');
 });
+
+// Public property browsing
+Route::get('/properties', [PropertyController::class, 'index'])->name('properties.index');
+Route::get('/properties/{property}', [PropertyController::class, 'show'])
+    ->middleware(['auth', 'verified', 'role:client,admin'])
+    ->name('properties.show');
+
+// Property viewings
+Route::get('/properties/{property}/viewings', [ViewingController::class, 'index'])->name('properties.viewings.index');
+Route::post('/properties/{property}/viewings', [ViewingController::class, 'store'])
+    ->middleware(['auth', 'verified', 'role:client,admin'])
+    ->name('properties.viewings.store');
+
+// Owner calendar
+Route::get('/owners/{owner}/calendar', [OwnerCalendarController::class, 'index'])
+    ->middleware(['auth', 'verified', 'role:owner,admin'])
+    ->name('owners.calendar');
 
 
 require __DIR__.'/settings.php';

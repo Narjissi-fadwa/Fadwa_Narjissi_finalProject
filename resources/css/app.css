@@ -157,3 +157,42 @@
         @apply bg-background text-foreground;
     }
 } */
+
+/* FullCalendar custom styles */
+.fc {
+  backdrop-filter: blur(12px);
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.162);
+  border-radius: 8px;
+  padding: 10px;
+}
+.fc-col-header-cell-cushion,.fc-col-header, .fc-col-header-cell{
+background-color: #2F8663;
+color: white;
+border: none;
+}
+
+
+/* Header toolbar style */
+.fc .fc-toolbar {
+  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  padding: 6px;
+}
+
+/* Day cells style */
+.fc .fc-daygrid-day {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid  rgba(255, 255, 255, 0.1);
+}
+
+/* Event style */
+.fc-event {
+  background-color: #2F8663 !important;
+  border: none !important;
+  backdrop-filter: blur(4px);
+  color: white !important;
+  border-radius: 4px;
+  padding: 2px 6px;
+}

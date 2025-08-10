@@ -1,16 +1,10 @@
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { useState } from "react"
 import { Link, usePage } from "@inertiajs/react"
 
 export default function Welcome() {
-    const { auth } = usePage().props;
+    const { auth , properties } = usePage().props;
     const [activeTab, setActiveTab] = useState('buy')
     const [propertyType, setPropertyType] = useState('')
     const [location, setLocation] = useState('')
@@ -22,7 +16,7 @@ export default function Welcome() {
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center">
                         <Link href="/" className="text-2xl font-bold text-white hover:text-emerald-400 transition-colors duration-300">
-                            Hillcrest
+                            <img src="/storage/logo-Hillcrest.png" alt="log" className="h-15 w-85" />
                         </Link>
                     </div>
 
@@ -84,7 +78,7 @@ export default function Welcome() {
                 <div className="relative z-10 flex h-full items-center justify-center pt-24 px-4 py-8">
                     <div className="w-full max-w-[70%] flex flex-col gap-26 pt-8 py-8">
                         <div className="text-center ">
-                            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
                                 Find your dream property
                             </h1>
                             <p className="text-white/80 text-lg">
@@ -178,34 +172,111 @@ export default function Welcome() {
                     </div>
                 </div>
             </section>
-            <section className="bg-slate-900/90 h-24 "> <h1>explore all properties</h1></section>
-            <div className="min-h-screen bg-fixed bg-[url('/storage/real-estatebg.png')] bg-cover bg-no-repeat  bg-right relative p-0 m-0">
-            <div className="absolute inset-0 bg-slate-900/50"></div>
-            <section className="relative z-10 w-full min-h-screen overflow-y-auto p-25">
-                <div className="max-w-6xl mx-auto px-6 lg:px-8  flex flex-col md:grid-cols-2 gap-12 items-center">
-                    
+            
+            <div className="min-h-screen  bg-fixed bg-[url('/storage/real-estatebg.png')] bg-cover bg-no-repeat bg-center relative">
+                <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-900/50 to-slate-900/70"></div>
+                <section className="relative z-10 py-20">
+                    <div className="max-w-6xl mx-auto px-6 lg:px-8">
 
-                    <div className="m-auto text-center">
-                        <h2 className="text-3xl font-bold text-slate-900 mb-4">
-                            About <span className="text-[#2F8663]">Hillcrest</span>
-                        </h2>
-                        <p className="text-slate-900 leading-relaxed mb-4">
-                            At <strong>Hillcrest</strong>, we connect property owners, agents, and clients on a single platform.
-                            Whether you’re looking to sell, rent, or buy, our mission is to simplify the process with
-                            a user-friendly interface and professional services.
-                        </p>
-                        <p className="text-slate-900 leading-relaxed mb-6">
-                            From listing your property to finalizing payments, we ensure a secure and transparent experience.
-                            Our team works closely with agents to provide you with personalized offers that match your needs.
-                        </p>
-                        <Button className="bg-[#2F8663] hover:bg-emerald-600 text-white px-8 py-3 rounded-xl text-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl">
-                            Learn More
-                        </Button>
+
+                        <div className="text-center backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl p-12 shadow-2xl">
+                            <h2 className="text-4xl font-bold text-white mb-6">
+                                About <span className="text-[#2F8663]">Hillcrest</span>
+                            </h2>
+                            <p className="text-white/90 text-lg leading-relaxed mb-6 max-w-3xl mx-auto">
+                                At <strong className="text-[#2F8663]">Hillcrest</strong>, we connect property owners, agents, and clients on a single platform.
+                                Whether you’re looking to sell, rent, or buy, our mission is to simplify the process with
+                                a user-friendly interface and professional services.
+                            </p>
+                            <p className="text-white/80 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
+                                From listing your property to finalizing payments, we ensure a secure and transparent experience.
+                                Our team works closely with agents to provide you with personalized offers that match your needs.
+                            </p>
+                            <Button className="bg-[#2F8663] hover:bg-emerald-600 text-white px-10 py-4 rounded-xl text-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                Learn More
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+                <section className="relative z-10 py-20">
+                    <div className="mx-auto max-w-7xl px-4">
+                        <div className="text-center mb-12 backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl">
+                            <h2 className="text-4xl font-bold text-white mb-4">Featured Properties</h2>
+                            <p className="text-lg text-white/80 max-w-2xl mx-auto">
+                                Discover our handpicked selection of premium properties
+                            </p>
+                        </div>
+
+                        {properties?.data?.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                                {properties.data.map((p) => (
+                                    <Card key={p.id} className="overflow-hidden   transition-all duration-300 hover:shadow-xl hover:-translate-y-1 backdrop-blur-md bg-slate-900 border border-white/20 shadow-2xl">
+                                        <div className="relative ">
+                                            {p.image ? (
+                                                <img src={p.image} alt={p.title} className="h-64 w-full object-cover" />
+                                            ) : (
+                                                <div className="flex h-64 w-full items-center justify-center bg-gray-100 text-gray-500">
+                                                    <div className="text-center">
+                                                        <div className="text-4xl mb-2">🏠</div>
+                                                        <p>No image available</p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div className="absolute top-4 right-4">
+                                                <span className="bg-[#2F8663] text-white px-3 py-1 rounded-full text-sm font-medium capitalize">
+                                                    {p.type}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <CardContent className="p-6">
+                                            <div className="mb-4">
+                                                <h3 className="text-xl font-bold text-white mb-2">{p.title}</h3>
+                                                <p className="text-white/80 flex items-center">
+                                                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                                    </svg>
+                                                    {p.address}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="text-2xl font-bold text-[#2F8663]">
+                                                    {Number(p.price).toLocaleString()} $
+                                                </div>
+                                                <div className="text-white/80 text-sm">
+                                                    {p.bedrooms ? `${p.bedrooms} bed` : '—'} • {p.area} m²
+                                                </div>
+                                            </div>
+
+                                            <Button asChild className="w-full bg-[#2F8663] hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition-all duration-300">
+                                                <Link href={route('properties.show', p.id)}>
+                                                    View Details
+                                                </Link>
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-16 backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl shadow-2xl">
+                                <h3 className="text-2xl font-semibold text-white mb-2">No Properties Available</h3>
+                                <p className="text-white/80">Check back later for new listings!</p>
+                            </div>
+                        )}
+
+                        <div className="text-center mt-12">
+                            <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl inline-block">
+                                <Button asChild className="bg-[#2F8663] hover:bg-emerald-700 text-white px-10 py-4 rounded-xl text-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                    <Link href={route('properties.index')}>
+                                        Explore All Properties
+                                    </Link>
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
-            <footer className="bg-gray-900 text-gray-300 py-10">
+            <footer className="bg-slate-900 text-gray-300 py-10">
                 <div className="max-w-6xl mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
 
                     <div>

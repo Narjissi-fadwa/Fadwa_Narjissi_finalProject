@@ -58,6 +58,11 @@ class Property extends Model
         return $this->hasMany(PropertyOffer::class);
     }
 
+    public function viewings(): HasMany
+    {
+        return $this->hasMany(Viewing::class);
+    }
+
     public function assignedAgent(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_agent_id');

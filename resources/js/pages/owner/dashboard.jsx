@@ -250,7 +250,7 @@ const Dashboard = () => {
         <AppLayout breadcrumbs={breadcrumbs} >
             <Head title="Owner Dashboard"  />
 
-            <div className="min-h-screen bg-fixed bg-[url('/storage/real-estatebg.png')] bg-contain bg-no-repeat  bg-right relative p-0 m-0'">
+            <div className="min-h-screen bg-fixed bg-[url('/storage/real-estatebg.png')] bg-contain bg-no-repeat  bg-right relative p-0 m-0">
                 <div className="absolute inset-0 bg-slate-900/30"></div>
                 <div className="relative z-10 w-full min-h-screen overflow-y-auto">
                     <div className="p-6 text-center">

@@ -79,6 +79,11 @@ class User extends Authenticatable
         return $this->hasMany(PropertyVisit::class, 'visitor_id');
     }
 
+    public function viewings()
+    {
+        return $this->hasMany(Viewing::class, 'client_id');
+    }
+
     // Property offers made by this user
     public function propertyOffers()
     {
