@@ -44,10 +44,7 @@ export default function AuthLuxuryLayout({ children, title, description }: Props
                         {/* Logo */}
                         <div className="mb-8 text-center">
                             <Link href={route('home')} className="inline-flex flex-col items-center gap-3 font-medium">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 backdrop-blur-sm">
-                                    <AppLogoIcon className="size-8 fill-current text-emerald-600" />
-                                </div>
-                                <span className="text-2xl font-bold text-white">EstateHub</span>
+                                <img src="/storage/logo-Hillcrest2.png" alt="logo" />
                             </Link>
                         </div>
                         <div className="text-white text-center p-20">

@@ -19,6 +19,7 @@ class DashboardTest extends TestCase
     {
         $this->actingAs($user = User::factory()->create());
 
-        $this->get('/dashboard')->assertOk();
+        $response = $this->get('/dashboard');
+        $response->assertStatus(302);
     }
 }

@@ -30,7 +30,7 @@ export default function Register() {
     };
 
     return (
-        <AuthLayout title="Create an account" description="Join EstateHub and discover your perfect property">
+        <AuthLayout title="Create an account" description="Join Hillcrest and discover your perfect property">
             <Head title="Register" />
             <form className="space-y-4 w-[600PX]" onSubmit={submit}>
 

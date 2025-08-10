@@ -5,6 +5,8 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PropertyStatusController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
@@ -80,13 +82,17 @@ Route::middleware(['auth', 'verified', 'role:owner,admin'])->prefix('owner')->na
     })->name('calendar');
 
     Route::get('/chat', function() {
-        return inertia('owner/chat');
+        return redirect('/chatify');
     })->name('chat');
 });
 
 Route::get('/client/dashboard', [ClientController::class, 'dashboard'])
     ->middleware(['auth', 'verified', 'role:client,admin'])
     ->name('client.dashboard');
+
+Route::get('/client/purchases', [ClientController::class, 'purchases'])
+    ->middleware(['auth', 'verified', 'role:client,admin'])
+    ->name('client.purchases');
 
 
 
@@ -132,6 +138,11 @@ Route::get('/properties/{property}', [PropertyController::class, 'show'])
     ->middleware(['auth', 'verified', 'role:client,admin'])
     ->name('properties.show');
 
+// Property interactions
+Route::post('/properties/{property}/contact', [ContactController::class, 'store'])
+    ->middleware(['auth', 'verified', 'role:client,admin'])
+    ->name('properties.contact');
+
 // Property viewings
 Route::get('/properties/{property}/viewings', [ViewingController::class, 'index'])->name('properties.viewings.index');
 Route::post('/properties/{property}/viewings', [ViewingController::class, 'store'])
@@ -140,8 +151,21 @@ Route::post('/properties/{property}/viewings', [ViewingController::class, 'store
 
 // Owner calendar
 Route::get('/owners/{owner}/calendar', [OwnerCalendarController::class, 'index'])
-    ->middleware(['auth', 'verified', 'role:owner,admin'])
+    ->middleware(['auth', 'verified', 'role:owner,admin,agent'])
     ->name('owners.calendar');
+
+// Client calendar for agents
+Route::get('/clients/{client}/calendar', [\App\Http\Controllers\ClientCalendarController::class, 'index'])
+    ->middleware(['auth', 'verified', 'role:agent,admin'])
+    ->name('clients.calendar');
+
+// Owner property status
+Route::post('/owner/properties/{property}/sold', [PropertyStatusController::class, 'markSold'])
+    ->middleware(['auth', 'verified', 'role:owner,admin'])
+    ->name('owner.properties.sold');
+Route::post('/owner/properties/{property}/available', [PropertyStatusController::class, 'markAvailable'])
+    ->middleware(['auth', 'verified', 'role:owner,admin'])
+    ->name('owner.properties.available');
 
 
 require __DIR__.'/settings.php';

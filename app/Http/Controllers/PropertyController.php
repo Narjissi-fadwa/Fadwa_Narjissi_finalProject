@@ -167,11 +167,21 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        
-        $properties = Property::query()
+        $q = Property::query()
             ->where('status', 'active')
-            ->where('approval_status', 'approved')
-            ->orderByDesc('id')
+            ->where('approval_status', 'approved');
+
+        // Optional filters
+        if ($type = request('type')) $q->where('type', $type);
+        if ($listing = request('listing_type')) $q->where('listing_type', $listing);
+        if ($minPrice = request('min_price')) $q->where('price', '>=', $minPrice);
+        if ($maxPrice = request('max_price')) $q->where('price', '<=', $maxPrice);
+        if ($minArea = request('min_area')) $q->where('area', '>=', $minArea);
+        if ($maxArea = request('max_area')) $q->where('area', '<=', $maxArea);
+        if ($bedrooms = request('bedrooms')) $q->where('bedrooms', '>=', $bedrooms);
+        if ($city = request('city')) $q->where('address', 'like', '%' . $city . '%');
+
+        $properties = $q->orderByDesc('id')
             ->paginate(12)
             ->through(function (Property $p) {
                 return [
@@ -203,6 +213,15 @@ class PropertyController extends Controller
 
         $property->load(['owner']);
 
+        // Check if current user has already contacted the owner
+        $hasContacted = false;
+        if (Auth::check()) {
+            $hasContacted = \App\Models\Deal::where('property_id', $property->id)
+                ->where('client_id', Auth::id())
+                ->whereNotNull('step_contacted_at')
+                ->exists();
+        }
+
         $data = [
             'id' => $property->id,
             'title' => $property->title,
@@ -217,6 +236,7 @@ class PropertyController extends Controller
                 'id' => $property->owner->id,
                 'name' => $property->owner->name,
             ],
+            'has_contacted' => $hasContacted,
         ];
 
         return Inertia::render('properties/Show', [

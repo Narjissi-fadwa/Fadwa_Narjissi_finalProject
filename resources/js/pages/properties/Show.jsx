@@ -21,13 +21,34 @@ export default function PropertyShow({ property }) {
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contacted, setContacted] = useState(property.has_contacted || false);
 
   const canBook = isAuthenticated && isClientOrAdmin && auth?.user?.id !== property.owner.id;
+
+  const contactOwner = async () => {
+    if (!canBook) return;
+    try {
+      const res = await fetch(route('properties.contact', property.id), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+        body: JSON.stringify({}),
+      });
+      if (res.ok) {
+        setContacted(true);
+        // Open Chatify in a new tab so user can continue booking
+        window.open('/chatify?id=' + encodeURIComponent(property.owner.id), '_blank');
+      }
+    } catch {}
+  };
 
   const eventsUrl = useMemo(() => route('properties.viewings.index', property.id), [property.id]);
 
   const handleSelect = (arg) => {
-    if (!canBook) return;
+    if (!canBook || !contacted) return;
     setSelection({ start: arg.startStr, end: arg.endStr });
   };
 
@@ -38,7 +59,7 @@ export default function PropertyShow({ property }) {
   };
 
   const submitBooking = async () => {
-    if (!selection) return;
+    if (!selection || !contacted) return;
     setIsSubmitting(true);
     setErrors(null);
     try {
@@ -79,17 +100,17 @@ export default function PropertyShow({ property }) {
   return (
     <div className="min-h-screen bg-fixed bg-[url('/storage/real-estatebg.png')] bg-cover bg-no-repeat bg-right relative">
       <div className="absolute inset-0 bg-slate-900/50"></div>
-      <div className="relative z-10">
-        <div className="mx-auto max-w-7xl px-4 py-8">
+      <div className="relative z-10 w-full">
+        <div className="px-4 gap-4  py-8 flex flex-col w-full">
           <h1><Link href={route('properties.index')} className='flex items-center gap-2 text-white hover:text-emerald-300 font-medium'>
-                                    <ArrowLeft></ArrowLeft>
-                                    Back to properties
-                                  </Link></h1>
+            <ArrowLeft></ArrowLeft>
+            Back to properties
+          </Link></h1>
           <div className="flex flex-col gap-8 ">
-            <div className=" mx-auto w-[100%]">
+            <div className=" mx-auto w-[70%]">
               <div className='text-center' >
                 {(property.images || []).slice(0, 4).map((src, idx) => (
-                  <img key={idx} src={src} alt="" className="h-60 w-full rounded object-cover" />
+                  <img key={idx} src={src} alt="" className="h-[450px] w-full rounded object-cover" />
                 ))}
               </div>
               <h1 className="mt-4 text-2xl font-semibold">{property.title}</h1>
@@ -98,11 +119,19 @@ export default function PropertyShow({ property }) {
               <div className="mt-1 text-sm">{property.type} • {property.area} m² • {property.bedrooms || '—'} bd</div>
               <p className="mt-4 whitespace-pre-line text-neutral-800">{property.description}</p>
             </div>
-            <div className="lg:col-span-1">
-              <div className="rounded border p-4">
-                <div className="mb-2 text-sm text-neutral-600">Owner</div>
-                <div className="text-base font-medium">{property.owner.name}</div>
+            <div className="lg:col-span-1 ">
+              <div className="rounded border p-4 bg-slate-900">
+                <div className="mb-2 text-sm text-white">Owner</div>
+                <div className="text-white font-medium">{property.owner.name}</div>
               </div>
+
+              {canBook && (
+                <div className="mt-4 bg-[#2F8663] p-4  rounded-lg">
+                  <Button onClick={contactOwner} disabled={contacted}>
+                    {contacted ? 'Contacted ✓' : 'Contact owner'}
+                  </Button>
+                </div>
+              )}
 
               <div className="mt-6">
                 <h2 className="mb-2 text-lg font-semibold">Viewing calendar</h2>
@@ -115,12 +144,17 @@ export default function PropertyShow({ property }) {
                     </div>
                   </div>
                 )}
+                {isAuthenticated && !contacted && canBook && (
+                  <div className="mb-3 rounded border border-amber-300 bg-amber-50 p-3 text-sm">
+                    Please contact the owner first to schedule a viewing.
+                  </div>
+                )}
                 <FullCalendar
                   ref={calendarRef}
                   plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
                   initialView="timeGridWeek"
                   height="auto"
-                  selectable={canBook}
+                  selectable={canBook && contacted}
                   selectMirror
                   select={handleSelect}
                   events={(info, success, failure) => {
@@ -140,12 +174,12 @@ export default function PropertyShow({ property }) {
         </div>
 
         <Dialog open={!!selection} onOpenChange={closeDialog}>
-          <DialogContent>
+          <DialogContent  className="bg-slate-900">
             <DialogHeader>
-              <DialogTitle>Confirm viewing request</DialogTitle>
+              <DialogTitle className="text-white">Confirm viewing request</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
-              <div className="text-sm text-neutral-700">
+              <div className="text-sm text-white">
                 Start: <span className="font-medium">{selection?.start}</span>
                 <br />
                 End: <span className="font-medium">{selection?.end}</span>
@@ -156,7 +190,7 @@ export default function PropertyShow({ property }) {
                   {Object.values(errors).flat().join(' ')}
                 </div>
               )}
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2 text-white">
                 <Button variant="outline" onClick={closeDialog} disabled={isSubmitting}>Cancel</Button>
                 <Button onClick={submitBooking} disabled={isSubmitting}>{isSubmitting ? 'Submitting…' : 'Submit'}</Button>
               </div>
@@ -167,5 +201,3 @@ export default function PropertyShow({ property }) {
     </div>
   );
 }
-
-

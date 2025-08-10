@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useState } from "react"
 import { Link, usePage } from "@inertiajs/react"
+import { Facebook, X, Instagram } from 'lucide-react';
 
 export default function Welcome() {
     const { auth , properties } = usePage().props;
@@ -78,7 +79,7 @@ export default function Welcome() {
                 <div className="relative z-10 flex h-full items-center justify-center pt-24 px-4 py-8">
                     <div className="w-full max-w-[70%] flex flex-col gap-26 pt-8 py-8">
                         <div className="text-center ">
-                            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+                            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                                 Find your dream property
                             </h1>
                             <p className="text-white/80 text-lg">
@@ -201,7 +202,7 @@ export default function Welcome() {
                 <section className="relative z-10 py-20">
                     <div className="mx-auto max-w-7xl px-4">
                         <div className="text-center mb-12 backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl">
-                            <h2 className="text-4xl font-bold text-white mb-4">Featured Properties</h2>
+                            <h2 className="text-4xl font-bold text-slate-900 mb-4">Featured Properties</h2>
                             <p className="text-lg text-white/80 max-w-2xl mx-auto">
                                 Discover our handpicked selection of premium properties
                             </p>
@@ -307,13 +308,13 @@ export default function Welcome() {
                         <h4 className="text-lg font-semibold text-white mb-4">Follow Us</h4>
                         <div className="flex space-x-4">
                             <a href="#" className="hover:text-emerald-500 transition">
-                                <i className="fab fa-facebook-f"></i>
+                                <Facebook className="w-6 h-6" />
                             </a>
                             <a href="#" className="hover:text-emerald-500 transition">
-                                <i className="fab fa-twitter"></i>
+                                <X className="w-6 h-6" />
                             </a>
                             <a href="#" className="hover:text-emerald-500 transition">
-                                <i className="fab fa-instagram"></i>
+                                <Instagram className="w-6 h-6" />
                             </a>
                         </div>
                     </div>

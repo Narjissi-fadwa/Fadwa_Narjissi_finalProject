@@ -15,13 +15,21 @@ class OwnerCalendarController extends Controller
         $auth = Auth::user();
         $roleName = optional($auth->role)->name;
 
-        if (!in_array($roleName, ['owner', 'admin'])) {
+        if (!in_array($roleName, ['owner', 'admin', 'agent'])) {
             abort(403);
         }
 
         // Owners can only view their own calendar unless admin
         if ($roleName === 'owner' && $auth->id !== $owner->id) {
             abort(403);
+        }
+
+        // Agents can view only if assigned to at least one of owner's properties
+        if ($roleName === 'agent') {
+            $isAssigned = $owner->properties()->where('assigned_agent_id', $auth->id)->exists();
+            if (!$isAssigned) {
+                abort(403);
+            }
         }
 
         $start = request()->query('start');

@@ -70,6 +70,9 @@ class ViewingController extends Controller
             notes: $request->input('notes')
         );
 
+        // Update deal pipeline step: scheduled
+        $this->viewingService->markDealScheduled($property, $user->id);
+
         return response()->json([
             'id' => $viewing->id,
             'property_id' => $viewing->property_id,

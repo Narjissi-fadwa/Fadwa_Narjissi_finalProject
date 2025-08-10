@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Property;
+use App\Models\Deal;
 use App\Models\Viewing;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +48,48 @@ class ViewingService
                 'status' => 'pending',
             ]);
         });
+    }
+
+    /**
+     * After creating a viewing, update the deal pipeline step for schedule.
+     */
+    public function markDealScheduled(Property $property, int $clientId): void
+    {
+        $deal = Deal::firstOrCreate(
+            ['property_id' => $property->id, 'client_id' => $clientId],
+            []
+        );
+
+        if (empty($deal->step_scheduled_at)) {
+            $deal->step_scheduled_at = now();
+            $deal->save();
+        }
+    }
+
+    /**
+     * Mark deals met when viewings have elapsed. Intended for a scheduled job/command.
+     */
+    public function markElapsedMeetingsAsMet(): int
+    {
+        $now = CarbonImmutable::now();
+        $viewings = Viewing::whereIn('status', ['pending', 'confirmed'])
+            ->where('end_at', '<', $now)
+            ->get();
+
+        $updated = 0;
+        foreach ($viewings as $viewing) {
+            $deal = Deal::firstOrCreate(
+                ['property_id' => $viewing->property_id, 'client_id' => $viewing->client_id],
+                []
+            );
+            if (empty($deal->step_met_at)) {
+                $deal->step_met_at = now();
+                $deal->save();
+                $updated++;
+            }
+        }
+
+        return $updated;
     }
 }
 

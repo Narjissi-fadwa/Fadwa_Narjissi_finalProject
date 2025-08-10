@@ -84,6 +84,16 @@ class User extends Authenticatable
         return $this->hasMany(Viewing::class, 'client_id');
     }
 
+    public function deals()
+    {
+        return $this->hasMany(Deal::class, 'client_id');
+    }
+
+    public function purchasedProperties()
+    {
+        return $this->hasMany(Property::class, 'sold_to_client_id');
+    }
+
     // Property offers made by this user
     public function propertyOffers()
     {

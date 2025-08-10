@@ -73,6 +73,16 @@ class Property extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
+    public function soldTo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'sold_to_client_id');
+    }
+
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class);
+    }
+
     public function getVisitsCountAttribute(): int
     {
         return $this->visits()->count();

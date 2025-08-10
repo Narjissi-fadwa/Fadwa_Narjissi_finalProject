@@ -24,7 +24,7 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <AuthLayout title="Welcome back" description="Sign in to your EstateHub account">
+        <AuthLayout title="Welcome back" description="Sign in to your Hillcrest account">
             <Head title="Log in" />
 
             {status && <div className="mb-6 text-center text-sm font-medium text-emerald-600 bg-emerald-50 p-3 rounded-xl">{status}</div>}

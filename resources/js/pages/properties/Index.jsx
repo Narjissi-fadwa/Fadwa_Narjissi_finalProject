@@ -14,9 +14,18 @@ import { ArrowLeft } from 'lucide-react';
 export default function PropertiesIndex({ properties }) {
   return (
     <div className="min-h-screen bg-fixed bg-[url('/storage/real-estatebg.png')] bg-cover bg-no-repeat  bg-right relative">
-      <div className="absolute inset-0 bg-slate-900/50"></div>
-      <div className="mx-auto max-w-7xl px-4 pt-34  ">
-        <h1 className="mb-6 text-3xl font-bold text-slate-900 text-center">Available properties</h1>
+      <div className="absolute z-0 inset-0 bg-slate-900/50"></div>
+      <div className="mx-auto max-w-7xl px-4 pt-34 relative z-10 ">
+        <div className="mb-6 flex items-center justify-between">
+          <Button asChild className="bg-[#2F8663] hover:bg-emerald-600 text-white">
+            <Link href={route('home')} className="flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
+            </Link>
+          </Button>
+          <h1 className="text-3xl font-bold text-slate-900">Available properties</h1>
+          <div></div> 
+        </div>
         <Carousel
           opts={{
             align: "start",
@@ -67,5 +76,3 @@ export default function PropertiesIndex({ properties }) {
    
   );
 }
-
-

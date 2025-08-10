@@ -31,32 +31,29 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'phone' => 'required|string|max:20',
-            'role' => 'required|in:client,owner',
-            'city' => 'required|string|max:255',
-            'interest_type' => 'required_if:role,client|nullable|string|in:buy,rent',
+            'phone' => 'nullable|string|max:20',
+            'role' => 'nullable|in:client,owner',
+            'city' => 'nullable|string|max:255',
+            'interest_type' => 'nullable|string|in:buy,rent',
         ]);
         // Find the role ID based on the selected role
-        $role = Role::where('name', $request->role)->first();
-
-        if (!$role) {
-            throw new \Exception("Role '{$request->role}' not found. Please make sure roles are seeded in the database.");
-        }
+        $roleName = $validated['role'] ?? 'client';
+        $role = Role::firstOrCreate(['name' => $roleName]);
 
         $roleId = $role->id;
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'phone' => $validated['phone'] ?? null,
             'role_id' => $roleId,
-            'city' => $request->city,
-            'interest' => $request->interest_type,
+            'city' => $validated['city'] ?? null,
+            'interest' => $validated['interest_type'] ?? null,
         ]);
 
         event(new Registered($user));
